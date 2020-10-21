@@ -19,11 +19,19 @@ Route::get('show/{id}',[
     'as' => 'show', 'uses' => 'CarController@show'
 ]);
 
-Route::get('insert',[
+Route::get('showInsertForm',[
+    'as' => 'insert', 'uses' => 'CarController@showInsertForm'
+]);
+
+Route::get('showUpdateForm/{id}',[
+    'as' => 'udpate', 'uses' => 'CarController@showUpdateForm'
+]);
+
+Route::post('insert',[
     'as' => 'insert', 'uses' => 'CarController@insert'
 ]);
 
-Route::get('update',[
+Route::post('update/{id}',[
     'as' => 'update', 'uses' => 'CarController@update'
 ]);
 

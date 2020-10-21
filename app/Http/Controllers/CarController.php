@@ -5,50 +5,70 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Car;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CarController extends  Controller
 {
 
+    public function showInsertForm(){
+        return view('addcar');
+    }
+
+    public function showUpdateForm($id){
+        $car = Car::find($id);
+        return view('updatecar',['car'=>$car]);
+    }
+
     public function show($id) {
-        $auto = Car::find($id);
+        $car = Car::find($id);
 
-        echo "Vyrobca: " . $auto->vyrobca . "<br>" .
-            "Typ: " . $auto->typ . "<br>" .
-            "Obsah: " . $auto->obsah . "<br>" .
-            "Hmotnosť: "  . $auto->hmotnost . "<br>" . "<br>" ;
+        echo "Vyrobca: " . $car->vyrobca . "<br>" .
+            "Typ: " . $car->typ . "<br>" .
+            "Obsah: " . $car->obsah . "<br>" .
+            "Hmotnosť: "  . $car->hmotnost . "<br>" . "<br>" ;
 
     }
 
-    public function insert() {
-        $auto = new Car();
-        $auto ->vyrobca = Str::random(10);
-        $auto ->typ = Str::random(6);
-        $auto ->obsah = mt_rand(1000,3000);
-        $auto ->hmotnost = mt_rand(800,2000);
-        $auto ->save();
+    public function insert(Request $request) {
+        $car = new Car();
+        $car ->vyrobca = $request ->input('vyrobca');
+        $car ->typ = $request ->input('typ');
+        $car ->obsah = $request ->input('obsah');
+        $car ->hmotnost = $request ->input('hmotnost');
+        $car ->save();
+
+        return response()->view('addcar');
     }
 
-    public function update() {
-        $auto = Car::where("id","=",mt_rand(1,4))->first();
-        $auto ->update(["hmotnost" =>mt_rand(1,100)]);
+    public function update($id,Request $request) {
+        $car = Car::find($id);
+        $car ->vyrobca = $request ->input('vyrobca');
+        $car ->typ = $request ->input('typ');
+        $car ->obsah = $request ->input('obsah');
+        $car ->hmotnost = $request ->input('hmotnost');
+
+        $car ->update();
+
+        return redirect()->action('CarController@showAll');
     }
 
     public function delete($id) {
-        $auto = Car::find($id);
-        $auto ->delete();
+        $car = Car::find($id);
+        $car ->delete();
 
+        return redirect()->action('CarController@showAll');
     }
 
     public function showAll() {
-        $auta = Car::all();
-        foreach ($auta as $auto) {
-            echo "Vyrobca: " . $auto->vyrobca . "<br>" .
-                "Typ: " . $auto->typ . "<br>" .
-                "Obsah: " . $auto->obsah . "<br>" .
-                "Hmotnosť: "  . $auto->hmotnost . "<br>" . "<br>" ;
-        }
-
+        $cars = Car::all();
+//        foreach ($auta as $car) {
+//            echo "Vyrobca: " . $car->vyrobca . "<br>" .
+//                "Typ: " . $car->typ . "<br>" .
+//                "Obsah: " . $car->obsah . "<br>" .
+//                "Hmotnosť: "  . $car->hmotnost . "<br>" . "<br>" ;
+//        }
+        return view('showAllCars',['cars'=> $cars]);
     }
 
 }
